@@ -2,7 +2,7 @@
 
 need `.env` file setup like
 ```
-# Database credentials postgre
+# Database credentials
 DB_HOST="set_credentials"
 DB_USER="set_credentials"
 DB_PASSWORD="set_credentials"
