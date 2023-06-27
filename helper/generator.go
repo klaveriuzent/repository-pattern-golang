@@ -22,20 +22,6 @@ func GenerateUserId(numberOfDigits int) (string, error) {
 	return generate, nil
 }
 
-func GenerateAccoundId(numberOfDigits int) (string, error) {
-	prefix := "ACC"
-	uniqueNumber, err := GenerateRandomSecureToken(numberOfDigits)
-	if err != nil {
-		return "", err
-	}
-	uniqueYear := getLastTwoDigitsOfYear()
-	day := getDayOfMonth()
-	timeValue := getCurrentTime()
-
-	generate := prefix + strconv.Itoa(uniqueNumber) + uniqueYear + day + timeValue
-	return generate, nil
-}
-
 func GenerateRandomSecureToken(numberOfDigits int) (int, error) {
 	maxLimit := int(math.Pow10(numberOfDigits)) - 1
 	randomNumber, err := rand.Int(rand.Reader, big.NewInt(int64(maxLimit)))
