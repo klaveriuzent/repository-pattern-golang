@@ -3,12 +3,15 @@ package auth
 import (
 	"errors"
 	"repositoryPattern/domain"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthService interface {
 	SignUp(user domain.User) error
 	GetUserByEmail(email string) Result
 	GetUserByUsername(username string) Result
+	CheckPassword(hashedPassword, password string) error
 }
 
 type authService struct {
@@ -20,7 +23,14 @@ func NewAuthService(userRepository UserRepository) AuthService {
 }
 
 func (s *authService) SignUp(user domain.User) error {
-	err := s.userRepository.SignUp(user)
+	// Hash password before signing up
+	hashedPassword, err := hashPassword(user.Password)
+	if err != nil {
+		return err
+	}
+	user.Password = hashedPassword
+
+	err = s.userRepository.SignUp(user)
 	if err != nil {
 		if err.Error() == "UNIQUE constraint failed: users.email" {
 			return errors.New("email already exists")
@@ -49,4 +59,16 @@ func (s *authService) GetUserByUsername(username string) Result {
 		user = result.Value.(domain.User)
 	}
 	return Result{user, result.Error}
+}
+
+func (s *authService) CheckPassword(hashedPassword, password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+}
+
+func hashPassword(password string) (string, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hashedPassword), nil
 }
