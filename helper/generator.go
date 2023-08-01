@@ -1,15 +1,18 @@
 package helper
 
 import (
-	"crypto/rand"
+	"errors"
 	"math"
-	"math/big"
+	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 )
 
+const userIdPrefix = "USR"
+
 func GenerateUserId(numberOfDigits int) (string, error) {
-	prefix := "USR"
+	prefix := userIdPrefix
 	uniqueNumber, err := GenerateRandomSecureToken(numberOfDigits)
 	if err != nil {
 		return "", err
@@ -18,18 +21,25 @@ func GenerateUserId(numberOfDigits int) (string, error) {
 	day := getDayOfMonth()
 	timeValue := getCurrentTime()
 
-	generate := prefix + strconv.Itoa(uniqueNumber) + uniqueYear + day + timeValue
-	return generate, nil
+	var builder strings.Builder
+	builder.WriteString(prefix)
+	builder.WriteString(strconv.Itoa(uniqueNumber))
+	builder.WriteString(uniqueYear)
+	builder.WriteString(day)
+	builder.WriteString(timeValue)
+
+	return builder.String(), nil
 }
 
 func GenerateRandomSecureToken(numberOfDigits int) (int, error) {
-	maxLimit := int(math.Pow10(numberOfDigits)) - 1
-	randomNumber, err := rand.Int(rand.Reader, big.NewInt(int64(maxLimit)))
-	if err != nil {
-		return 0, err
+	if numberOfDigits < 1 || numberOfDigits > 9 {
+		return 0, errors.New("numberOfDigits must be between 1 and 9")
 	}
-	randomNumberInt := int(randomNumber.Int64())
-	return randomNumberInt, nil
+
+	rand.Seed(time.Now().UnixNano())
+	maxLimit := int(math.Pow10(numberOfDigits))
+	randomNumber := rand.Intn(maxLimit)
+	return randomNumber, nil
 }
 
 func getLastTwoDigitsOfYear() string {
