@@ -13,6 +13,7 @@ CREATE TABLE public.users (
 );
 ```
 
+
 need `.env` file setup like
 ```
 # Database credentials
