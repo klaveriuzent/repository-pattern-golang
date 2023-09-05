@@ -79,6 +79,7 @@ func (h *authHandler) SignUp(c *gin.Context) {
 		Email:    signUpRequest.Email,
 		Username: signUpRequest.Username,
 		Password: signUpRequest.Password,
+		Role:     signUpRequest.Role,
 	}
 
 	err = h.authService.SignUp(user)

@@ -17,5 +17,5 @@ func main() {
 	v1 := router.Group("api/v1")
 	auth.NewAuthHandler(v1, auth.AuthRegistry(db))
 
-	router.Run(":1000")
+	router.Run()
 }

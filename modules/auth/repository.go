@@ -30,6 +30,7 @@ func (r *userRepository) SignUp(user domain.User) error {
 		Email:    user.Email,
 		Username: user.Username,
 		Password: user.Password,
+		Role:     user.Role,
 	}
 	result := r.db.Create(&userEntity)
 	if result.Error != nil {
